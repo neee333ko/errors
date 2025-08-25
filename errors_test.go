@@ -96,6 +96,9 @@ func TestCause(t *testing.T) {
 	}, {
 		WithStack(io.EOF),
 		io.EOF,
+	}, {
+		WithCode(123, io.EOF, "code error"),
+		io.EOF,
 	}}
 
 	for i, tt := range tests {
@@ -246,6 +249,44 @@ func TestErrorEquality(t *testing.T) {
 	for i := range vals {
 		for j := range vals {
 			_ = vals[i] == vals[j] // mustn't panic
+		}
+	}
+}
+
+func TestWithCode(t *testing.T) {
+	tests := []struct {
+		code  int
+		cause error
+		err   string
+		want  string
+	}{
+		{123456, fmt.Errorf("can't find the page"), "code error", "(code:123456) can't find the page"},
+		{456789, fmt.Errorf("can't connect to server"), "code error", "(code:456789) can't connect to server"},
+	}
+
+	for _, tt := range tests {
+		c := WithCode(tt.code, tt.cause, tt.err)
+		if c.Error() != tt.want {
+			t.Errorf("WithCode(%v, %v): got:%v want:%v", tt.code, tt.err, c.Error(), tt.want)
+		}
+	}
+}
+
+func TestWrapC(t *testing.T) {
+	tests := []struct {
+		code  int
+		cause error
+		err   string
+		want  string
+	}{
+		{123456, fmt.Errorf("can't find the page"), "withcode", "(code:123456) can't find the page"},
+		{456789, fmt.Errorf("can't connect to server"), "withcode", "(code:456789) can't connect to server"},
+	}
+
+	for _, tt := range tests {
+		c := WrapC(tt.cause, tt.code, tt.err)
+		if c.Error() != tt.want {
+			t.Errorf("WithCode(%v, %v): got:%v want:%v", tt.code, tt.err, c.Error(), tt.want)
 		}
 	}
 }

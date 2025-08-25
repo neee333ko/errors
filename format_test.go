@@ -409,22 +409,21 @@ func testFormatRegexp(t *testing.T, n int, arg interface{}, format, want string)
 var stackLineR = regexp.MustCompile(`\.`)
 
 // parseBlocks parses input into a slice, where:
-//  - incase entry contains a newline, its a stacktrace
-//  - incase entry contains no newline, its a solo line.
+//   - incase entry contains a newline, its a stacktrace
+//   - incase entry contains no newline, its a solo line.
 //
 // Detecting stack boundaries only works incase the WithStack-calls are
 // to be found on the same line, thats why it is optionally here.
 //
 // Example use:
 //
-// for _, e := range blocks {
-//   if strings.ContainsAny(e, "\n") {
-//     // Match as stack
-//   } else {
-//     // Match as line
-//   }
-// }
-//
+//	for _, e := range blocks {
+//	  if strings.ContainsAny(e, "\n") {
+//	    // Match as stack
+//	  } else {
+//	    // Match as line
+//	  }
+//	}
 func parseBlocks(input string, detectStackboundaries bool) ([]string, error) {
 	var blocks []string
 
@@ -555,6 +554,61 @@ func testGenericRecursive(t *testing.T, beforeErr error, beforeWant []string, li
 		testFormatCompleteCompare(t, maxDepth, err, "%+v", want, false)
 		if maxDepth > 0 {
 			testGenericRecursive(t, err, want, list, maxDepth-1)
+		}
+	}
+}
+
+func TestWithCodeFormat(t *testing.T) {
+	tests := []struct {
+		err          error
+		formatString string
+		want         string
+	}{
+		{
+			WithCode(123, io.EOF, "code error"),
+			"%v",
+			"code error",
+		},
+		{
+			WithCode(123, fmt.Errorf("new error"), "code error"),
+			"%s",
+			"code error",
+		},
+		{
+			WithCode(123, io.EOF, "code error"),
+			"%-v",
+			"code error - #0 [/home/going/workspace/golang/src/github.com/neee333ko/errors/format_test.go:578 TestWithCodeFormat] (#123)",
+		},
+		{
+			WithCode(123, New("message"), "code error"),
+			"%+v",
+			"code error - #0 [/home/going/workspace/golang/src/github.com/neee333ko/errors/format_test.go:583 TestWithCodeFormat] (#123); message - #1 [/home/going/workspace/golang/src/github.com/neee333ko/errors/format_test.go:583 TestWithCodeFormat] (#100000)",
+		},
+		{
+			WithCode(123, io.EOF, "code error"),
+			"%#v",
+			`[{"error":"code error"}]`,
+		},
+		{
+			WithCode(123, io.EOF, "code error"),
+			"%#-v",
+			`[{"caller":"#0 /home/going/workspace/golang/src/github.com/neee333ko/errors/format_test.go:593 (TestWithCodeFormat)","code":123,"error":"code error"}]`,
+		}, {
+			WithCode(123, New("message"), "code error"),
+			"%#+v",
+			`[{"caller":"#0 /home/going/workspace/golang/src/github.com/neee333ko/errors/format_test.go:597 (TestWithCodeFormat)","code":123,"error":"code error"},{"caller":"#1 /home/going/workspace/golang/src/github.com/neee333ko/errors/format_test.go:597 (TestWithCodeFormat)","code":100000,"error":"message"}]`,
+		},
+	}
+
+	for _, tt := range tests {
+		str := fmt.Sprintf(tt.formatString, tt.err)
+		fmt.Printf("%s\n", str)
+
+		if str != tt.want {
+			t.Errorf("test Sprintf(%s, %v): want:%s got:%s", tt.formatString,
+				tt.err,
+				tt.want,
+				str)
 		}
 	}
 }
