@@ -66,12 +66,16 @@ func MustRegister(c Coder) {
 	panic(fmt.Errorf("code already exists"))
 }
 
-func GetCoder(code int) Coder {
-	mu.RLock()
-	defer mu.RUnlock()
+func ParseCoder(err error) Coder {
+	if c, ok := err.(*withCode); ok {
+		mu.RLock()
+		defer mu.RUnlock()
 
-	if v, ok := pool[code]; ok {
-		return v
+		if v, ok := pool[c.code]; ok {
+			return v
+		} else {
+			return &defaultCoder
+		}
 	}
 
 	return &defaultCoder
