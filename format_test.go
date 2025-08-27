@@ -565,36 +565,36 @@ func TestWithCodeFormat(t *testing.T) {
 		want         string
 	}{
 		{
-			WithCode(123, io.EOF, "code error"),
+			WrapC(io.EOF, 123, "code error"),
 			"%v",
 			"code error",
 		},
 		{
-			WithCode(123, fmt.Errorf("new error"), "code error"),
+			WrapC(fmt.Errorf("new error"), 123, "code error"),
 			"%s",
 			"code error",
 		},
 		{
-			WithCode(123, io.EOF, "code error"),
+			WrapC(io.EOF, 123, "code error"),
 			"%-v",
 			"code error - #0 [/home/going/workspace/golang/src/github.com/neee333ko/errors/format_test.go:578 TestWithCodeFormat] (#123)",
 		},
 		{
-			WithCode(123, New("message"), "code error"),
+			WrapC(New("message"), 123, "code error"),
 			"%+v",
 			"code error - #0 [/home/going/workspace/golang/src/github.com/neee333ko/errors/format_test.go:583 TestWithCodeFormat] (#123); message - #1 [/home/going/workspace/golang/src/github.com/neee333ko/errors/format_test.go:583 TestWithCodeFormat] (#100000)",
 		},
 		{
-			WithCode(123, io.EOF, "code error"),
+			WrapC(io.EOF, 123, "code error"),
 			"%#v",
 			`[{"error":"code error"}]`,
 		},
 		{
-			WithCode(123, io.EOF, "code error"),
+			WrapC(io.EOF, 123, "code error"),
 			"%#-v",
 			`[{"caller":"#0 /home/going/workspace/golang/src/github.com/neee333ko/errors/format_test.go:593 (TestWithCodeFormat)","code":123,"error":"code error"}]`,
 		}, {
-			WithCode(123, New("message"), "code error"),
+			WrapC(New("message"), 123, "code error"),
 			"%#+v",
 			`[{"caller":"#0 /home/going/workspace/golang/src/github.com/neee333ko/errors/format_test.go:597 (TestWithCodeFormat)","code":123,"error":"code error"},{"caller":"#1 /home/going/workspace/golang/src/github.com/neee333ko/errors/format_test.go:597 (TestWithCodeFormat)","code":100000,"error":"message"}]`,
 		},

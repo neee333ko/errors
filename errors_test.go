@@ -97,7 +97,7 @@ func TestCause(t *testing.T) {
 		WithStack(io.EOF),
 		io.EOF,
 	}, {
-		WithCode(123, io.EOF, "code error"),
+		WrapC(io.EOF, 123, "code error"),
 		io.EOF,
 	}}
 
@@ -255,17 +255,16 @@ func TestErrorEquality(t *testing.T) {
 
 func TestWithCode(t *testing.T) {
 	tests := []struct {
-		code  int
-		cause error
-		err   string
-		want  string
+		code int
+		err  string
+		want string
 	}{
-		{123456, fmt.Errorf("can't find the page"), "code error", "(code:123456) can't find the page"},
-		{456789, fmt.Errorf("can't connect to server"), "code error", "(code:456789) can't connect to server"},
+		{123456, "code error", "code error"},
+		{456789, "code error", "code error"},
 	}
 
 	for _, tt := range tests {
-		c := WithCode(tt.code, tt.cause, tt.err)
+		c := WithCode(tt.code, tt.err)
 		if c.Error() != tt.want {
 			t.Errorf("WithCode(%v, %v): got:%v want:%v", tt.code, tt.err, c.Error(), tt.want)
 		}

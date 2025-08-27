@@ -261,13 +261,9 @@ func (w *withMessage) Format(s fmt.State, verb rune) {
 	}
 }
 
-func WithCode(code int, cause error, err string) *withCode {
-	if cause == nil {
-		return nil
-	}
+func WithCode(code int, err string) *withCode {
 
 	return &withCode{
-		cause: cause,
 		code:  code,
 		err:   err,
 		stack: callers(),
