@@ -46,7 +46,7 @@ func TestTypeaggregate(t *testing.T) {
 			fn:         "Error",
 			agg:        aggregate([]error{New("error1"), New("error2"), NewAggregate([]error{New("error3")})}),
 			target:     nil,
-			wantString: "[error1; error2; error3]",
+			wantString: "[1]error1; [2]error2; [3]error3",
 			wantBool:   false,
 		},
 		{

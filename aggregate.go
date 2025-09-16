@@ -3,6 +3,7 @@ package errors
 import (
 	"bytes"
 	"fmt"
+	"strconv"
 )
 
 type MessageCountMap map[string]int
@@ -54,13 +55,13 @@ func (agg aggregate) Error() string {
 
 	for i, v := range ss {
 		if i == len(ss)-1 {
-			b.WriteString(v)
+			b.WriteString("[" + strconv.Itoa(i+1) + "]" + v)
 		} else {
-			b.WriteString(v + "; ")
+			b.WriteString("[" + strconv.Itoa(i+1) + "]" + v + "; ")
 		}
 	}
 
-	return "[" + b.String() + "]"
+	return b.String()
 }
 
 func (agg aggregate) Errors() []error {
