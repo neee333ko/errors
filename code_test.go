@@ -10,9 +10,9 @@ func TestRegister(t *testing.T) {
 		err      error
 		wantCode int
 	}{
-		{DefaultCoder{code: 100001, httpStatus: "200", message: "connected", reference: "http://reference.com"}, WithCode(100001, "code error"), 100001},
-		{DefaultCoder{code: 100002, httpStatus: "400", message: "invalid token", reference: "http://reference.com"}, WithCode(100002, "code errror"), 100002},
-		{DefaultCoder{code: 100003, httpStatus: "500", message: "internal server error", reference: "http://reference.com"}, WithCode(100003, "code error"), 100003},
+		{DefaultCoder{code: 100001, httpStatus: 200, message: "connected", reference: "http://reference.com"}, WithCode(100001, "code error"), 100001},
+		{DefaultCoder{code: 100002, httpStatus: 400, message: "invalid token", reference: "http://reference.com"}, WithCode(100002, "code errror"), 100002},
+		{DefaultCoder{code: 100003, httpStatus: 500, message: "internal server error", reference: "http://reference.com"}, WithCode(100003, "code error"), 100003},
 	}
 
 	for _, tt := range tests {
@@ -32,8 +32,8 @@ func TestMustRegister(t *testing.T) {
 		WantCode    int
 		ShouldPanic bool
 	}{
-		{"regularMustRegister", DefaultCoder{code: 100001, httpStatus: "200", message: "Connected", reference: "http://reference.com"}, WithCode(100001, "code error"), 100001, false},
-		{"duplicatedMustRegister", DefaultCoder{code: 100002, httpStatus: "400", message: "Client Error", reference: "http://reference.com"}, WithCode(100002, "code error"), 100002, true},
+		{"regularMustRegister", DefaultCoder{code: 100001, httpStatus: 200, message: "Connected", reference: "http://reference.com"}, WithCode(100001, "code error"), 100001, false},
+		{"duplicatedMustRegister", DefaultCoder{code: 100002, httpStatus: 400, message: "Client Error", reference: "http://reference.com"}, WithCode(100002, "code error"), 100002, true},
 	}
 
 	for _, tt := range tests {
@@ -71,7 +71,6 @@ func TestMustRegister(t *testing.T) {
 					}
 				}
 			}
-
 		})
 	}
 }

@@ -5,18 +5,18 @@ import (
 	"sync"
 )
 
-var defaultCoder DefaultCoder = DefaultCoder{code: 100000, httpStatus: "200", message: "", reference: ""}
+var defaultCoder DefaultCoder = DefaultCoder{code: 100000, httpStatus: 200, message: "", reference: ""}
 
 type Coder interface {
 	Code() int
-	HttpStatus() string
+	HttpStatus() int
 	Message() string
 	Reference() string
 }
 
 type DefaultCoder struct {
 	code       int
-	httpStatus string
+	httpStatus int
 	message    string
 	reference  string
 }
@@ -25,7 +25,7 @@ func (c *DefaultCoder) Code() int {
 	return c.code
 }
 
-func (c *DefaultCoder) HttpStatus() string {
+func (c *DefaultCoder) HttpStatus() int {
 	return c.httpStatus
 }
 
